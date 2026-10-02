@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPin — Google IT Automation Concept Wall</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="theme-corkboard">
+  <!-- Top Navigation / Control Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand">
+        <span class="brand-pin">📌</span>
+        <div>
+          <h1 class="brand-title">StudyPin Wall</h1>
+          <p class="brand-subtitle">Google IT Automation Study Board</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Quick Action Buttons -->
+      <button id="btn-new-note" class="btn btn-primary" title="Create a new sticky note (Hotkey: N)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        <span>New Note</span>
+        <kbd>N</kbd>
+      </button>
+
+      <button id="btn-toggle-string-mode" class="btn btn-secondary" title="Connect two notes with yarn/string">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.5 8.5l7 7"/></svg>
+        <span>Link Concepts</span>
+      </button>
+
+      <button id="btn-recall-mode" class="btn btn-toggle" title="Active recall mode: blur code & answers until clicked (Hotkey: M)">
+        <span class="icon">🧠</span>
+        <span>Active Recall</span>
+      </button>
+    </div>
+
+    <!-- Center Module Filter & Search -->
+    <div class="header-center">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="input-search" placeholder="Search concepts, code, regex... (/)" />
+        <button id="btn-clear-search" class="btn-clear hidden">&times;</button>
+      </div>
+
+      <div class="filter-dropdown-wrapper">
+        <select id="select-module-filter" class="select-filter">
+          <option value="all">📚 All Modules & Topics</option>
+          <option value="c1">Course 1: Python Crash Course</option>
+          <option value="c2">Course 2: Python & OS (Files, CSV, Regex)</option>
+          <option value="c3">Course 3: Git & GitHub</option>
+          <option value="c4">Course 4: Troubleshooting & Debugging</option>
+          <option value="c5">Course 5: Configuration Management (Puppet)</option>
+          <option value="c6">Course 6: Real-World Automation</option>
+          <option value="custom">📌 Custom Notes</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Right Controls: View, Themes, Tools -->
+    <div class="header-right">
+      <!-- Theme Switcher -->
+      <div class="theme-picker" title="Wall texture / surface">
+        <button class="theme-btn active" data-theme="corkboard" title="Corkboard Wall">🪵</button>
+        <button class="theme-btn" data-theme="slate" title="Slate Tech Dark">⬛</button>
+        <button class="theme-btn" data-theme="blueprint" title="Blueprint Grid">📐</button>
+        <button class="theme-btn" data-theme="clean" title="Studio Light">📄</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Canvas zoom/pan helper -->
+      <div class="zoom-controls">
+        <button id="btn-zoom-out" class="icon-btn" title="Zoom Out (-)">−</button>
+        <button id="btn-zoom-reset" class="zoom-level" title="Reset Zoom">100%</button>
+        <button id="btn-zoom-in" class="icon-btn" title="Zoom In (+)">+</button>
+      </div>
+
+      <button id="btn-tidy-board" class="icon-btn" title="Tidy up & auto-arrange notes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+      </button>
+
+      <button id="btn-menu-settings" class="icon-btn" title="Backup, Import, Starter Notes, Info">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Notification Banner / String link instructions -->
+  <div id="banner-notification" class="notification-banner hidden">
+    <span id="banner-message">Connecting notes... Click the first note, then the second note to pin a yarn.</span>
+    <button id="btn-cancel-string-mode" class="btn-banner-action">Cancel (Esc)</button>
+  </div>
+
+  <!-- The Interactive Wall Container -->
+  <main id="board-viewport" class="board-viewport">
+    <div id="board-canvas" class="board-canvas">
+      <!-- SVG Connecting Yarn / Strings Layer -->
+      <svg id="svg-strings" class="svg-strings" xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <!-- Pinned Sticky Notes Container -->
+      <div id="notes-container" class="notes-container">
+        <!-- Sticky notes dynamically rendered here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Floating HUD & Shortcuts Hint -->
+  <footer class="app-hud">
+    <div class="hud-stats">
+      <span id="hud-note-count">0 Notes</span> &bull; 
+      <span id="hud-string-count">0 Links</span> &bull; 
+      <span id="hud-filter-label">All Courses</span>
+    </div>
+    <div class="hud-shortcuts">
+      <span><kbd>N</kbd> New Note</span>
+      <span><kbd>M</kbd> Recall Mode</span>
+      <span><kbd>Space+Drag</kbd> Pan Board</span>
+      <span><kbd>Scroll</kbd> Zoom</span>
+    </div>
+  </footer>
+
+  <!-- Modal: Note Editor -->
+  <dialog id="modal-note-editor" class="app-dialog">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <h2 id="editor-dialog-title">Pin a New Concept Note</h2>
+        <button id="btn-close-editor" class="btn-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="form-note-editor" method="dialog">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="note-title">Title / Concept Question</label>
+            <input type="text" id="note-title" required placeholder="e.g. Python 'with open' context manager" autocomplete="off" />
+          </div>
+          <div class="form-group flex-1">
+            <label for="note-module">Course Module</label>
+            <select id="note-module">
+              <option value="c2">C2: OS & Python (Files, CSV, Regex)</option>
+              <option value="c1">C1: Python Crash Course</option>
+              <option value="c3">C3: Git & Version Control</option>
+              <option value="c4">C4: Troubleshooting & Debugging</option>
+              <option value="c5">C5: Config Management (Puppet)</option>
+              <option value="c6">C6: Real-World Automation</option>
+              <option value="custom">General / Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Paper Color</label>
+            <div class="color-picker-row" id="color-picker-row">
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="yellow" checked />
+                <span class="swatch swatch-yellow" title="Classic Post-it Yellow"></span>
+              </label>
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="blue" />
+                <span class="swatch swatch-blue" title="Sky Blue"></span>
+              </label>
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="green" />
+                <span class="swatch swatch-green" title="Mint Green"></span>
+              </label>
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="pink" />
+                <span class="swatch swatch-pink" title="Rose Pink"></span>
+              </label>
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="purple" />
+                <span class="swatch swatch-purple" title="Lavender"></span>
+              </label>
+              <label class="color-swatch-label">
+                <input type="radio" name="note-color" value="dark" />
+                <span class="swatch swatch-dark" title="Dark Terminal Slate"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Pushpin Color</label>
+            <div class="pin-picker-row" id="pin-picker-row">
+              <label class="pin-swatch-label">
+                <input type="radio" name="pin-color" value="red" checked />
+                <span class="pin-indicator pin-red" title="Classic Red Pin"></span>
+              </label>
+              <label class="pin-swatch-label">
+                <input type="radio" name="pin-color" value="blue" />
+                <span class="pin-indicator pin-blue" title="Cobalt Blue Pin"></span>
+              </label>
+              <label class="pin-swatch-label">
+                <input type="radio" name="pin-color" value="green" />
+                <span class="pin-indicator pin-green" title="Emerald Pin"></span>
+              </label>
+              <label class="pin-swatch-label">
+                <input type="radio" name="pin-color" value="yellow" />
+                <span class="pin-indicator pin-yellow" title="Gold Pin"></span>
+              </label>
+              <label class="pin-swatch-label">
+                <input type="radio" name="pin-color" value="silver" />
+                <span class="pin-indicator pin-silver" title="Silver Metal Pin"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="note-badge">Category Tag</label>
+            <select id="note-badge">
+              <option value="Concept">🧠 Concept</option>
+              <option value="Syntax">⚡ Syntax / Code</option>
+              <option value="Gotcha">⚠️ Gotcha / Pitfall</option>
+              <option value="Command">💻 Bash / CLI</option>
+              <option value="CheatSheet">📋 Quick Sheet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="editor-toolbar">
+            <label for="note-content">Note Content (Markdown & Code supported)</label>
+            <div class="toolbar-helpers">
+              <button type="button" class="btn-snippet" data-snip="code" title="Insert Python code block">&lt;/&gt; Python Code</button>
+              <button type="button" class="btn-snippet" data-snip="recall" title="Insert recall spoiler: ||hidden answer||">🧠 Spoiler/Recall</button>
+              <button type="button" class="btn-snippet" data-snip="bullet" title="Insert bullet list">&bull; List</button>
+              <button type="button" class="btn-snippet" data-snip="callout" title="Insert key takeaway tip">💡 Tip</button>
+            </div>
+          </div>
+          <textarea id="note-content" rows="9" placeholder="Write your memorization notes, syntax, context managers, regex patterns, or questions here...
+
+Tip: Surround text with ||two bars|| to hide it in Active Recall mode!
+
+```python
+with open('data.txt') as file:
+    for line in file:
+        print(line.strip())
+```"></textarea>
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" id="btn-delete-current-note" class="btn btn-danger hidden">Delete Note</button>
+          <div class="spacer"></div>
+          <button type="button" id="btn-cancel-editor" class="btn btn-ghost">Cancel</button>
+          <button type="submit" id="btn-save-note" class="btn btn-primary">Pin to Wall 📌</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: Settings, Backup & Starter Notes -->
+  <dialog id="modal-settings" class="app-dialog">
+    <div class="dialog-card dialog-settings">
+      <div class="dialog-header">
+        <h2>Wall Settings & Study Packs</h2>
+        <button id="btn-close-settings" class="btn-close">&times;</button>
+      </div>
+
+      <div class="settings-content">
+        <section class="settings-section">
+          <h3>📚 Google IT Automation Starter Pack</h3>
+          <p class="section-desc">Instantly populate your wall with curated high-yield notes for Course 2 (Files, Regex, Subprocess, OS), Course 3 (Git), and Course 4 (Troubleshooting).</p>
+          <div class="btn-row">
+            <button id="btn-load-starter-notes" class="btn btn-accent">
+              <span>📥 Load IT Automation Starter Pack</span>
+            </button>
+            <button id="btn-clear-all-notes" class="btn btn-danger-outline">
+              <span>🗑️ Clear Wall</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3>💾 Backup & Portability</h3>
+          <p class="section-desc">Your notes are automatically saved locally in your browser. You can export a JSON backup file or import existing study notes anytime.</p>
+          <div class="btn-row">
+            <button id="btn-export-backup" class="btn btn-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              <span>Export Notes (JSON)</span>
+            </button>
+            <label class="btn btn-secondary btn-file-label">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <span>Import Notes</span>
+              <input type="file" id="input-import-file" accept=".json" style="display:none;" />
+            </label>
+            <button id="btn-print-wall" class="btn btn-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print Study Sheet</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3>🎯 How to use StudyPin for Active Recall</h3>
+          <ul class="tips-list">
+            <li><strong>Pin Notes Anywhere:</strong> Click and drag notes around the corkboard. Pinned notes stay right where you leave them.</li>
+            <li><strong>Link Concepts with Red Yarn:</strong> Click "Link Concepts", then click two related notes (like Python <code>with open</code> and CSV <code>DictReader</code>) to visualize connections.</li>
+            <li><strong>Active Recall Mode:</strong> Press <kbd>M</kbd> to blur code blocks and answers marked with <code>||answer||</code>. Quiz yourself, then hover or click to verify!</li>
+            <li><strong>Pan & Zoom:</strong> Hold <kbd>Space</kbd> and drag anywhere on the wall to pan, or use mouse wheel to zoom in and out.</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="dialog-footer">
+        <button id="btn-settings-done" class="btn btn-primary">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Audio elements for subtle tactile sounds (generated via Web Audio API, so no external files needed!) -->
+  <script src="app.js"></script>
+</body>
+</html>
